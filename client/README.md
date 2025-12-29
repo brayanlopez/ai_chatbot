@@ -74,7 +74,8 @@ export default defineConfig([
 
 ## TODO
 
-- [ ] config react-router
-- [ ] add tailwind css
-- [ ] add material UI and icons
+- [ ] Add tailwind css
+- [ ] Add Material UI and icons
 - [ ] Add styles config
+- [ ] Check issue with useNavigate
+- [ ] Review architecture of the project

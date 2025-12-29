@@ -1,5 +1,7 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
+// import { useNavigate } from "react-router";
+import { dummyChatData, dummyUserData } from "../assets/assets";
 
 // Define the shape of your context value
 interface AppContextType {
@@ -9,7 +11,7 @@ interface AppContextType {
   // theme: 'light' | 'dark';
   // setUser: (user: User | null) => void;
   // setTheme: (theme: 'light' | 'dark') => void;
-  
+
   // Placeholder property to avoid empty interface
   isInitialized: boolean;
 }
@@ -23,17 +25,71 @@ interface AppContextProviderProps {
 
 export const AppContextProvider = ({ children }: AppContextProviderProps) => {
   // Initialize your context value here
-  const value: AppContextType = {
+  // const navigate = useNavigate();
+  const [user, setUser] = useState<unknown>(null);
+  const [chats, setChats] = useState<unknown>(null);
+  const [selectedChat, setSelectedChat] = useState<unknown>(null);
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+
+  const fetchUserData = async () => {
+    // Implementation for fetching user data
+    setUser(dummyUserData);
+  };
+
+  const fetchUsersChat = async () => {
+    // Implementation for fetching user data
+    setChats(dummyChatData);
+    setSelectedChat(dummyChatData[0]);
+  };
+
+  const value = {
     // Add your actual context values here
     // For example:
     // user: null,
     // theme: 'light',
     // setUser: (user) => { /* implementation */ },
     // setTheme: (theme) => { /* implementation */ },
-    
+
     // Placeholder value
     isInitialized: true,
+    // navigate,
+    user,
+    setUser,
+    chats,
+    setChats,
+    selectedChat,
+    setSelectedChat,
+    theme,
+    setTheme,
+    fetchUserData,
+    fetchUsersChat,
   };
+
+  useEffect(() => {
+    Promise.resolve().then(fetchUserData);
+  }, []);
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  useEffect(() => {
+    if (!user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setChats([]);
+      setSelectedChat(null);
+    }
+    if (user) {
+      (async () => {
+        await fetchUsersChat();
+      })();
+    }
+  }, [user]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
